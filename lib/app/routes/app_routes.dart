@@ -8,6 +8,8 @@ abstract class Routes {
   static const FORMULIR = _Paths.FORMULIR;
   static const PENGEJUALAN = _Paths.PENGEJUALAN;
   static const PENJUALAN = _Paths.PENJUALAN;
+  static const POST = _Paths.POST;
+  static const ALBUM = _Paths.ALBUM;
 }
 
 abstract class _Paths {
@@ -17,4 +19,6 @@ abstract class _Paths {
   static const FORMULIR = '/formulir';
   static const PENGEJUALAN = '/pengejualan';
   static const PENJUALAN = '/penjualan';
+  static const POST = '/post';
+  static const ALBUM = '/album';
 }

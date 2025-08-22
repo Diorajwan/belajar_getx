@@ -25,6 +25,16 @@ class PenjualanOutputView extends StatelessWidget {
     // Format tanggal otomatis
     String tanggal = DateFormat("dd MMMM yyyy, HH:mm").format(DateTime.now());
 
+    // Format Rupiah
+    final currency = NumberFormat.currency(
+      locale: "id_ID",
+      symbol: "Rp ",
+      decimalDigits: 0,
+    );
+
+    // Hitung diskon persen
+    int diskonPersen = total >= 100000 ? 10 : 0;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -90,7 +100,7 @@ class PenjualanOutputView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Harga/Unit"),
-                        Text("Rp$harga"),
+                        Text(currency.format(harga)),
                       ],
                     ),
                     const Divider(),
@@ -98,9 +108,17 @@ class PenjualanOutputView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Total Sebelum Diskon"),
-                        Text("Rp$total"),
+                        Text(currency.format(total)),
                       ],
                     ),
+                    if (diskonPersen > 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Diskon"),
+                          Text("$diskonPersen%"),
+                        ],
+                      ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -109,7 +127,7 @@ class PenjualanOutputView extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Rp$totalDiskon",
+                          currency.format(totalDiskon),
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.green),
                         ),

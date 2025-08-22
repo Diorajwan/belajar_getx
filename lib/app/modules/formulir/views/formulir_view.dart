@@ -1,44 +1,64 @@
 import 'package:belajar_getx/app/modules/formulir/views/formlir_output_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:belajar_getx/app/modules/formulir/controllers/formulir_controller.dart';
-// ignore: unused_import
-import 'formulir_output_view.dart';
+import '../controllers/formulir_controller.dart';
 
 class FormulirView extends GetView<FormulirController> {
-  const FormulirView({super.key});
+  const FormulirView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Formulir'),
+        title: const Text(
+          'Formulir Pendaftaran',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.indigo,
+        elevation: 4,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Input Nama
+            const SizedBox(height: 30),
+
+            // Nama
             TextField(
               controller: controller.nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nama',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: 'Nama Lengkap',
+                hintText: 'Masukkan nama Anda',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.person),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
             const SizedBox(height: 20),
 
-            // Dropdown Kursus
+            // Pilihan Kursus
             Obx(
               () => DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Pilih Kursus',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.school),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
-                value: controller.selectedCourse.value.isEmpty
+                value: controller.selectedCourses.value.isEmpty
                     ? null
-                    : controller.selectedCourse.value,
+                    : controller.selectedCourses.value,
                 items: controller.courses.map((course) {
                   return DropdownMenuItem(
                     value: course,
@@ -47,82 +67,91 @@ class FormulirView extends GetView<FormulirController> {
                 }).toList(),
                 onChanged: (value) {
                   if (value != null) {
-                    controller.selectedCourse.value = value;
+                    controller.selectedCourses.value = value;
                   }
                 },
               ),
             ),
             const SizedBox(height: 20),
 
-            // RadioButton Gender
+            // Jenis Kelamin
+            const Text(
+              'Jenis Kelamin:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             Obx(
               () => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Jenis Kelamin:"),
-                  Row(
-                    children: [
-                      Radio<String>(
-                        value: "Laki-laki",
-                        groupValue: controller.gender.value,
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.gender.value = value;
-                          }
-                        },
-                      ),
-                      const Text("Laki-laki"),
-                      Radio<String>(
-                        value: "Perempuan",
-                        groupValue: controller.gender.value,
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.gender.value = value;
-                          }
-                        },
-                      ),
-                      const Text("Perempuan"),
-                    ],
-                  )
+                  RadioListTile<String>(
+                    title: const Text('Laki-laki'),
+                    value: 'Laki-laki',
+                    groupValue: controller.gender.value,
+                    onChanged: (value) {
+                      controller.gender.value = value!;
+                    },
+                    activeColor: Colors.indigo,
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Perempuan'),
+                    value: 'Perempuan',
+                    groupValue: controller.gender.value,
+                    onChanged: (value) {
+                      controller.gender.value = value!;
+                    },
+                    activeColor: Colors.indigo,
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
 
-            // DatePicker (gunakan Text Obx biar gak bikin controller baru tiap build)
-            Obx(
-              () => TextFormField(
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: "Tanggal Lahir",
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => controller.pickDate(),
+            // Tanggal
+            GestureDetector(
+              onTap: () => controller.selectDate(context),
+              child: AbsorbPointer(
+                child: Obx(
+                  () => TextField(
+                    readOnly: true,
+                    controller: TextEditingController(
+                      text: controller.formattedDate,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Tanggal Lahir',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      prefixIcon: const Icon(Icons.calendar_today),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
                   ),
-                ),
-                controller: TextEditingController(
-                  text: controller.formattedDate,
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
 
             // Tombol Submit
             ElevatedButton(
               onPressed: () {
-                // Arahkan ke output view, passing data langsung
-                Get.to(
-                  () => FormulirOutputView(
-                    nama: controller.nameController.text,
-                    kursus: controller.selectedCourse.value,
-                    gender: controller.gender.value,
-                    tanggal: controller.formattedDate,
-                  ),
-                );
+                Get.to(() => FormulirOutputView());
               },
-              child: const Text("Submit"),
-            )
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                elevation: 5,
+              ),
+              child: const Text(
+                'Submit',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/counter_controller.dart';
 
-// ignore: must_be_immutable
 class CounterView extends GetView<CounterController> {
   CounterView({Key? key}) : super(key: key);
-  // ignore: annotate_overrides
-  CounterController controller = Get.put(CounterController());
+
+  // inisialisasi controller
+  final CounterController controller = Get.put(CounterController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,19 +15,41 @@ class CounterView extends GetView<CounterController> {
         title: const Text('CounterView'),
         centerTitle: true,
       ),
-      body:  Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // menampilkan angka
             Obx(
               () => Text(
                 controller.count.toString(),
-                // ignore: prefer_const_constructors
-                style: TextStyle(fontSize: 20),
+                style:
+                    const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
               ),
             ),
-            // ignore: prefer_const_constructors
-            ElevatedButton(onPressed: ()=>controller.increment(), child: Text('tambah'))
+            const SizedBox(height: 30),
+
+            // tombol tambah & kurang
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: controller.decrement,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: const Text("Kurang"),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: controller.increment,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: const Text("Tambah"),
+                ),
+              ],
+            ),
           ],
         ),
       ),

@@ -1,40 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import "package:intl/intl.dart";
+import 'package:intl/intl.dart';
 
 class FormulirController extends GetxController {
   final nameController = TextEditingController();
 
-  // Kursus
-  final selectedCourse = ''.obs;
+  final selectedCourses = ''.obs;
+
   List<String> courses = ['Flutter', 'Dart', 'Java', 'Python', 'JavaScript'];
 
-  // Jenis Kelamin
   final gender = ''.obs;
 
-  // Tanggal
+  // Menggunakan Rx<DateTime> untuk tanggal yang dipilih
   final selectedDate = DateTime.now().obs;
 
+  // Getter untuk mendapatkan format tanggal yang sudah diubah
   String get formattedDate =>
       DateFormat('dd/MM/yyyy').format(selectedDate.value);
 
-  // Fungsi memilih tanggal
-  Future<void> pickDate() async {
+  // Fungsi untuk menampilkan date picker dan memperbarui tanggal
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-      context: Get.context!,
+      context: context,
       initialDate: selectedDate.value,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      // Mengatur rentang tahun yang lebih masuk akal untuk tanggal lahir
+      firstDate: DateTime(DateTime.now().year - 100),
+      lastDate: DateTime.now(), // Membatasi hingga tanggal hari ini
     );
+
+    // Memastikan tanggal dipilih sebelum memperbarui nilai
     if (picked != null && picked != selectedDate.value) {
       selectedDate.value = picked;
     }
   }
 
-  // Reset form
   void clearForm() {
     nameController.clear();
-    selectedCourse.value = '';
+    selectedCourses.value = '';
     gender.value = '';
     selectedDate.value = DateTime.now();
   }
@@ -44,10 +46,4 @@ class FormulirController extends GetxController {
     nameController.dispose();
     super.onClose();
   }
-}
-
-class DateFormat {
-  DateFormat(String s);
-  
-  format(DateTime value) {}
 }
